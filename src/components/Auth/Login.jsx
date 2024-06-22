@@ -1,7 +1,51 @@
-import React from 'react';
+import React, { useState } from 'react';
+import {  Navigate, useNavigate } from 'react-router-dom'; // Assuming you use react-router for navigation
 import Navbar from '../Common/Navbar';
+import { loginApi } from '../../apis/api'; // Import your login API function
+import { toast } from 'react-toastify';
 
 const Login = () => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const history = useNavigate();
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        
+        const formData = {
+            email: email,
+            password: password
+        };
+
+        try {
+            const response = await loginApi(formData);
+            const { data } = response;
+            console.log(data.success); 
+            
+            if (data.success) {
+                toast.success(data.success.message); 
+                // Display success message
+                localStorage.setItem("token", response.data.token);
+                const convertedJson = JSON.stringify(response.data.userData);
+                localStorage.setItem("user", convertedJson);
+
+                console.log(data.userData.isAdmin)
+
+                if(data.userData.isAdmin){
+                    history('/admin/dashboard')
+                }else{
+                    history('/');
+                }
+                // Redirect to home or another page upon successful login
+              
+            } else {
+                toast.error(data.message || 'Failed to login. Please check your credentials.');
+            }
+        } catch (error) {
+            console.error('Error logging in:', error);
+            toast.error('Failed to login. Please check your credentials.');
+        }
+    };
     return (
         <>
             <Navbar />
@@ -17,11 +61,13 @@ const Login = () => {
                     <h2 className="mt-6 text-3xl font-extrabold text-gray-900">Login to your account</h2>
 
                 </div>
-                <form className="mt-8 space-y-6 w-1/3">
+                <form className="mt-8 space-y-6 w-1/3" onSubmit={handleSubmit}>
                     <div className="my-5">
                         <input
                             type="email"
                             required
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             className="rounded-md appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-700 text-gray-900 focus:outline-none focus:ring-amber-700 focus:border-amber-700 focus:z-10 sm:text-sm"
                             placeholder="Email address"
                         />
@@ -30,6 +76,8 @@ const Login = () => {
                         <input
                             type="password"
                             required
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                             className="rounded-md appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-700 text-gray-900 focus:outline-none focus:ring-amber-700 focus:border-amber-700 focus:z-10 sm:text-sm"
                             placeholder="Password"
                         />
@@ -47,7 +95,7 @@ const Login = () => {
                             </label>
                         </div>
                         <div className="text-sm">
-                            <a href="/fortgot" className="font-medium text-amber-900 hover:text-amber-700">
+                            <a href="/forgot" className="font-medium text-amber-900 hover:text-amber-700">
                                 Forgot your password?
                             </a>
                         </div>
@@ -59,14 +107,12 @@ const Login = () => {
                         Login
                     </button>
 
-                    <p className="mt-2 text-xl text-gray-900 text-center ">
+                    <p className="mt-2 text-xl text-gray-900 text-center">
                         Don't have an account yet? {' '}
                         <a href="/signup" className="font-medium text-amber-900 hover:text-amber-700">
                             Signup
                         </a>
                     </p>
-
-
                 </form>
             </div>
         </>
@@ -74,4 +120,3 @@ const Login = () => {
 };
 
 export default Login;
-
