@@ -1,39 +1,43 @@
-import React from 'react';
-import { FaCircleMinus, FaDeleteLeft } from "react-icons/fa6";
+import React, { useState } from 'react';
+import { FaTrash } from "react-icons/fa";
 
-const CartItem = ({ imageSrc, itemName, itemDescription, itemPrice }) => {
-    return (
-      <div>
-         <div className="border-b border-gray-500 w-full"></div>
-        <div className="flex justify-between items-center gap-3 px-4 bg-white rounded-lg py-9">
-          <img src={imageSrc} className="w-20 h-20" alt={itemName} />
-          <div className="flex flex-col">
-            <span className="font-bold text-sm">{itemName}</span>
-            <span>{itemDescription}</span>
-            <span>Rs. {itemPrice}</span>
-          </div>
-          <div className='flex gap-6'>
-            <div className="flex flex-col gap-1">
-              <span className="font-bold">Delivery Date</span>
-              <span>21-May</span>
-            </div>
-            <div className="flex flex-col gap-1">
-              <span className="font-bold">Pick Date</span>
-              <span>21-May</span>
-            </div>
-            <div className="flex flex-col gap-1">
-              <span className="font-bold">Duration</span>
-              <span>2</span>
-            </div>
-          </div>
-          <div>
-            <FaCircleMinus size={22} color="red" />
-          </div>
-          
-        </div>
-        <div className="border-b border-gray-500 w-full"></div>
-      </div>
-    );
+const CartItem = ({ title, description, image, price , quantity, changeQuantity, removeItem }) => {
+  const [itemQuantity, setItemQuantity] = useState(quantity);
+
+  const increaseQuantity = () => {
+    const newQuantity = itemQuantity + 1;
+    setItemQuantity(newQuantity);
+    changeQuantity(newQuantity);
   };
 
-  export default CartItem;
+  const decreaseQuantity = () => {
+    if (itemQuantity > 1) {
+      const newQuantity = itemQuantity - 1;
+      setItemQuantity(newQuantity);
+      changeQuantity(newQuantity);
+    }
+  };
+
+  return (
+    <div className="border border-gray-200 shadow-lg rounded-lg p-4">
+      <div className="flex justify-between items-center gap-3">
+        <img src={image} className="w-36 h-36" alt={title} />
+        <div className="text-xl flex flex-col">
+          <span className="font-bold text-xl">{title}</span>
+          <span>{description}</span>
+          <span>Rs. {price}</span>
+        </div>
+        <div className='flex items-center gap-2'>
+          <button onClick={decreaseQuantity} className="text-gray-700 px-2 py-1 border rounded">-</button>
+          <span>{itemQuantity}</span>
+          <button onClick={increaseQuantity} className="text-gray-700 px-2 py-1 border rounded">+</button>
+        </div>
+        <button className="text-red-500" onClick={removeItem}>
+          <FaTrash size={22} />
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default CartItem;
