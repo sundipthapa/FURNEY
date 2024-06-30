@@ -4,9 +4,9 @@ const FirstSecondCollection = ({ imageSrc, title, description }) => {
   return (
     <div className="max-w-sm mx-auto bg-white rounded-lg overflow-hidden shadow-3xl md:max-w-full">
       <div className="flex flex-col items-center justify-center p-4">
-        <div className="w-full border-4 border-amber-600 rounded-lg overflow-hidden">
+        <div className="w-full border-4 border-amber-600 rounded-lg overflow-hidden ">
           <img
-            className="h-96 w-full object-cover"
+            className="h-96 w-full object-cover  "
             src={imageSrc}
             alt={title}
           />
